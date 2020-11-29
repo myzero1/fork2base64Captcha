@@ -42,19 +42,27 @@ func (c *NoStoreCaptcha) Generate() (id, b64s string, err error) {
 	}
 	// c.Store.Set(id, answer)
 	timeout := 300
+	idLength := 8
 	myValues := reflect.ValueOf(*c.Store)
 	myTypes := myValues.Type()
 	for i := 0; i < myValues.NumField(); i++ {
-		if "Timeout" == myTypes.Field(i).Name {
+		fieldName := myTypes.Field(i).Name
+		if "Timeout" == fieldName {
 			tmp, err := strconv.Atoi(fmt.Sprintf(`%v`, myValues.Field(i)))
 			if err == nil {
 				timeout = tmp
 			}
-			break
+		} else {
+			if "IDLength" == fieldName {
+				tmp, err := strconv.Atoi(fmt.Sprintf(`%v`, myValues.Field(i)))
+				if err == nil {
+					idLength = tmp
+				}
+			}
 		}
 	}
 
-	id = generateMD5ID(answer, timeout)
+	id = generateMD5ID(answer, timeout, idLength)
 	b64s = item.EncodeB64string()
 	return
 }

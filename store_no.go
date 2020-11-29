@@ -18,16 +18,24 @@ package base64Captcha
 type noStore struct {
 	// unit is Second
 	Timeout int
+	// id lenth
+	IDLength int
 }
 
 // NewNoStore returns a new standard memory store for captchas with the
 // given collection threshold and expiration time (duration). The returned
 // store must be registered with SetCustomStore to replace the default one.
-func NewNoStore(timeout ...int) *noStore {
+// NewNoStore(300, 8)
+// NewNoStore(Timeout, IDlength)
+func NewNoStore(opts ...int) *noStore {
 	s := new(noStore)
 	s.Timeout = 300
-	if len(timeout) > 0 {
-		s.Timeout = timeout[0]
+	if len(opts) > 0 {
+		s.Timeout = opts[0]
+	}
+	s.IDLength = 8
+	if len(opts) > 1 {
+		s.IDLength = opts[1]
 	}
 	return s
 }
@@ -36,7 +44,7 @@ func (s *noStore) Set(id string, value string) {
 }
 
 func (s *noStore) Verify(id, answer string, clear bool) (ok bool) {
-	md5Id := generateMD5ID(answer, s.Timeout)
+	md5Id := generateMD5ID(answer, s.Timeout, s.IDLength)
 
 	return md5Id == id
 }

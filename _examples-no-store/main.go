@@ -23,7 +23,7 @@ type configJsonBody struct {
 }
 
 // var store = base64Captcha.DefaultMemStore
-var store = base64Captcha.NewNoStore(30)
+var store = base64Captcha.NewNoStore(30, 10)
 
 // base64Captcha create http handler
 func generateCaptchaHandler(w http.ResponseWriter, r *http.Request) {
