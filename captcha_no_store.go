@@ -34,11 +34,11 @@ func NewNoStoreCaptcha(driver Driver, store *noStore) *NoStoreCaptcha {
 }
 
 //Generate generates a random id, base64 image string or an error if any
-func (c *NoStoreCaptcha) Generate() (id, b64s string, err error) {
+func (c *NoStoreCaptcha) Generate() (id, b64s, answer string, err error) {
 	id, content, answer := c.Driver.GenerateIdQuestionAnswer()
 	item, err := c.Driver.DrawCaptcha(content)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	// c.Store.Set(id, answer)
 	timeout := 300
@@ -62,7 +62,7 @@ func (c *NoStoreCaptcha) Generate() (id, b64s string, err error) {
 		}
 	}
 
-	id = generateMD5ID(answer, timeout, idLength)
+	id = GenerateMD5ID(answer, timeout, idLength)
 	b64s = item.EncodeB64string()
 	return
 }
@@ -73,4 +73,11 @@ func (c *NoStoreCaptcha) Generate() (id, b64s string, err error) {
 //You may want to call `store.Verify` method instead.
 func (c *NoStoreCaptcha) Verify(id, answer string, clear bool) (match bool) {
 	return c.Store.Verify(id, answer, clear)
+}
+
+//GenerateIdQuestionAnswer creates id,content and answer
+func (c *NoStoreCaptcha) GenerateIdQuestionAnswer() (id, content, answer string) {
+	id, content, answer = c.Driver.GenerateIdQuestionAnswer()
+	id = GenerateMD5ID(answer, c.Store.Timeout, c.Store.IDLength)
+	return id, content, content
 }

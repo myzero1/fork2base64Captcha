@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func generateMD5ID(content string, timeout int, idLenth int) (id string) {
+func GenerateMD5ID(content string, timeout int, idLenth int) (id string) {
 	salt := int(int(time.Now().Unix()) / timeout)
 	data := fmt.Sprintf(`%s_%d`, content, salt)
 	h := md5.New()

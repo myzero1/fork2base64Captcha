@@ -44,7 +44,7 @@ func (s *noStore) Set(id string, value string) {
 }
 
 func (s *noStore) Verify(id, answer string, clear bool) (ok bool) {
-	md5Id := generateMD5ID(answer, s.Timeout, s.IDLength)
+	md5Id := GenerateMD5ID(answer, s.Timeout, s.IDLength)
 
 	return md5Id == id
 }
