@@ -16,12 +16,6 @@
 // base64Captcha is used for fast development of RESTful APIs, web apps and backend services in Go. give a string identifier to the package and it returns with a base64-encoding-png-string
 package base64Captcha
 
-import (
-	"fmt"
-	"reflect"
-	"strconv"
-)
-
 // NoStoreCaptcha captcha basic information.
 type NoStoreCaptcha struct {
 	Driver Driver
@@ -40,29 +34,34 @@ func (c *NoStoreCaptcha) Generate() (id, b64s, answer string, err error) {
 	if err != nil {
 		return "", "", "", err
 	}
-	// c.Store.Set(id, answer)
-	timeout := 300
-	idLength := 8
-	myValues := reflect.ValueOf(*c.Store)
-	myTypes := myValues.Type()
-	for i := 0; i < myValues.NumField(); i++ {
-		fieldName := myTypes.Field(i).Name
-		if "Timeout" == fieldName {
-			tmp, err := strconv.Atoi(fmt.Sprintf(`%v`, myValues.Field(i)))
-			if err == nil {
-				timeout = tmp
-			}
-		} else {
-			if "IDLength" == fieldName {
-				tmp, err := strconv.Atoi(fmt.Sprintf(`%v`, myValues.Field(i)))
-				if err == nil {
-					idLength = tmp
-				}
-			}
-		}
-	}
 
-	id = GenerateMD5ID(answer, timeout, idLength)
+	// c.Store.Set(id, answer)
+
+	// timeout := 300
+	// idLength := 8
+	// myValues := reflect.ValueOf(*c.Store)
+	// myTypes := myValues.Type()
+	// for i := 0; i < myValues.NumField(); i++ {
+	// 	fieldName := myTypes.Field(i).Name
+	// 	if "Timeout" == fieldName {
+	// 		tmp, err := strconv.Atoi(fmt.Sprintf(`%v`, myValues.Field(i)))
+	// 		if err == nil {
+	// 			timeout = tmp
+	// 		}
+	// 	} else {
+	// 		if "IDLength" == fieldName {
+	// 			tmp, err := strconv.Atoi(fmt.Sprintf(`%v`, myValues.Field(i)))
+	// 			if err == nil {
+	// 				idLength = tmp
+	// 			}
+	// 		}
+	// 	}
+	// }
+
+	// id = GenerateMD5ID(answer, c.Store.Password, timeout, idLength)
+
+	id = GenerateMD5ID(answer, c.Store.Password, c.Store.Timeout, c.Store.IDLength)
+
 	b64s = item.EncodeB64string()
 	return
 }
@@ -78,6 +77,6 @@ func (c *NoStoreCaptcha) Verify(id, answer string, clear bool) (match bool) {
 //GenerateIdQuestionAnswer creates id,content and answer
 func (c *NoStoreCaptcha) GenerateIdQuestionAnswer() (id, content, answer string) {
 	id, content, answer = c.Driver.GenerateIdQuestionAnswer()
-	id = GenerateMD5ID(answer, c.Store.Timeout, c.Store.IDLength)
+	id = GenerateMD5ID(answer, c.Store.Password, c.Store.Timeout, c.Store.IDLength)
 	return id, content, content
 }
