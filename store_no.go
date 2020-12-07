@@ -17,18 +17,19 @@ package base64Captcha
 // noStore is an internal store for captcha ids and their values.
 type noStore struct {
 	// unit is Second
-	Timeout int
-	// id lenth
+	Timeout  int
 	IDLength int
+	Password string
 }
 
 // NewNoStore returns a new standard memory store for captchas with the
 // given collection threshold and expiration time (duration). The returned
 // store must be registered with SetCustomStore to replace the default one.
-// NewNoStore(300, 8)
-// NewNoStore(Timeout, IDlength)
-func NewNoStore(opts ...int) *noStore {
+// NewNoStore("myzero1", 300, 8)
+// NewNoStore(Password, Timeout, IDlength)
+func NewNoStore(pw string, opts ...int) *noStore {
 	s := new(noStore)
+	s.Password = pw
 	s.Timeout = 300
 	if len(opts) > 0 {
 		s.Timeout = opts[0]
@@ -44,7 +45,7 @@ func (s *noStore) Set(id string, value string) {
 }
 
 func (s *noStore) Verify(id, answer string, clear bool) (ok bool) {
-	md5Id := GenerateMD5ID(answer, s.Timeout, s.IDLength)
+	md5Id := GenerateMD5ID(answer, s.Password, s.Timeout, s.IDLength)
 
 	return md5Id == id
 }

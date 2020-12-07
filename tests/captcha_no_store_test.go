@@ -25,7 +25,7 @@ import (
 )
 
 func TestNoStoreCaptcha_GenerateB64s_Verify(t *testing.T) {
-	store := base64Captcha.NewNoStore(30, 10)
+	store := base64Captcha.NewNoStore("mzyero1", 30, 10)
 	bgc := &color.RGBA{
 		R: 255,
 		G: 255,
@@ -59,7 +59,7 @@ func TestNoStoreCaptcha_GenerateB64s_Verify(t *testing.T) {
 }
 
 func TestNoStoreCaptcha_GenerateIdQuestionAnswer_Verify(t *testing.T) {
-	store := base64Captcha.NewNoStore(30, 10)
+	store := base64Captcha.NewNoStore("myzero1", 30, 10)
 	bgc := &color.RGBA{
 		R: 255,
 		G: 255,
